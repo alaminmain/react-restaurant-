@@ -1,18 +1,47 @@
-import react from "react";
+import React from "react";
 import { Component } from "react/cjs/react.production.min";
-import { Navbar, NavbarBrand } from "reactstrap";
+import { Navbar, NavbarBrand, Nav, NavItem, NavbarToggler, Collapse } from "reactstrap";
+import { Link } from 'react-router-dom'
 
+class Navigation extends Component {
+    constructor(props)
+    {
+        super(props);
+        this.state={
+            isNavOpen:false
+        }
+    }
 
-const Navigation = () => {
-    return (
-        <div>
-            <Navbar dark color="dark">
-                <div className="container">
-                    <NavbarBrand herf="/">My Resturant</NavbarBrand>
-                </div>
+    navToggle=()=>
+    {
+        this.setState({
+            isNavOpen:!this.state.isNavOpen
+        })
+    }
 
-            </Navbar>
-        </div>
-    );
+    render() {
+        return (
+            <div>
+                <Navbar dark color="dark" expand="sm">
+                    <div className="container">
+                        <NavbarToggler onClick={this.navToggle}/>
+                        <NavbarBrand herf="/">My Resturant</NavbarBrand>
+                        <Collapse isOpen={this.state.isNavOpen} navbar>
+                            <Nav className="mr-auto" navbar>
+                                <NavItem>
+                                    <Link to="/" className="nav-link active">Home</Link>
+                                </NavItem>
+                                <NavItem ><Link to="/menu" className="nav-link ">Menu</Link></NavItem>
+                                <NavItem ><Link to="/about" className="nav-link ">About</Link></NavItem>
+                                <NavItem ><Link to="/contact" className="nav-link ">Contact</Link></NavItem>
+
+                            </Nav>
+                        </Collapse>
+                    </div>
+
+                </Navbar>
+            </div>
+        );
+    }
 }
 export default Navigation;
