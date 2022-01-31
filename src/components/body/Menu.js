@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import DISHES from "../../data/dishes";
-import Comments from "../../data/Comments";
+
 import MenuItem from "./MenuItem";
 import DishDetail from "./DishDetail";
 import { CardColumns, Modal, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { connect } from "react-redux";
 import { addComment,fetchDishes } from "../../redux/actionCreators";
-import Loading from "./Loading.js";
+import Loading from "./Loading";
 
 const mapStateToProps = state => {
     //onsole.log("mapState to props", state);
@@ -49,7 +48,7 @@ class Menu extends Component {
 
     render() {
         document.title = "Menu";
-
+        
         if (this.props.dishes.isLoading) {
             return (
                 <Loading />
