@@ -1,9 +1,10 @@
 
-import Comments from "../data/Comments";
+
 import { combineReducers } from "redux";
 import * as actionType from './actionTypes';
 import { IntitalContactForm } from "./forms";
 import { createForms } from "react-redux-form";
+import { connect } from "react-redux";
 
 
 // const initailState = {
@@ -11,21 +12,30 @@ import { createForms } from "react-redux-form";
 //     comments: Comments
 // }
 
-const dishReducer = (dishState = {isLoading:false,dishes: [] }, action) => {
+const dishReducer = (dishState = { isLoading: false, dishes: [], errMess: null }, action) => {
     switch (action.type) {
         case actionType.DISHES_LOADING:
-            console.log("it is Calling");    
-        return{
+            console.log("it is Calling");
+            return {
 
                 ...dishState,
-                isLoading:true,
-                dishes:[]
+                isLoading: true,
+                dishes: [],
+                errMess: null
             }
         case actionType.LOAD_DISHES:
-            return{
+            return {
                 ...dishState,
-                isLoading:false,
-                dishes:action.payload
+                isLoading: false,
+                errMess: null,
+                dishes: action.payload
+            }
+        case actionType.DISHES_FAILED:
+            return {
+                ...dishState,
+                isLoading: false,
+                errMess: action.payload,
+                dishes: []
             }
         default:
             return dishState;
@@ -33,17 +43,33 @@ const dishReducer = (dishState = {isLoading:false,dishes: [] }, action) => {
 
 }
 
-const commentReducer = (commentState = Comments, action) => {
+const commentReducer = (commentState = { isLoading: true, comments: [] }, action) => {
     switch (action.type) {
+        case actionType.LOAD_COMMENTS:
+            return {
+                ...commentState,
+                isLoading: false,
+                comments: action.payload
+            };
+
+        case actionType.COMMENT_LOADING:
+            return {
+                ...commentState,
+                isLoading: true,
+                comments: []
+            };
         case actionType.ADD_COMMENT:
             let comment = action.payload;
-            comment.id = commentState.length;
-            comment.date = new Date().toDateString();
+            // comment.id = commentState.length;
+            // comment.date = new Date().toDateString();
 
-           // console.log(comment);
+            // console.log(comment);
 
 
-            return commentState.concat(comment)
+            return {
+                ...comment,
+                comments: commentState.comments.concat(comment)
+            };
         default:
             return commentState;
     }
@@ -55,6 +81,6 @@ export const Reducer = combineReducers({
     dishes: dishReducer,
     comments: commentReducer,
     ...createForms({
-        feedback:IntitalContactForm
+        feedback: IntitalContactForm
     })
 })

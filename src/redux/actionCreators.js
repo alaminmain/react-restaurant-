@@ -1,32 +1,73 @@
 import * as actionTypes from './actionTypes';
-import DISHES from '../data/dishes';
 
-export const addComment = (dishId, rating, author, comment) => ({
-    type: actionTypes.ADD_COMMENT,
-    payload: {
+import axios from 'axios';
+import { baseUrl } from './baseUrl';
+
+export const addComment = (dishId, rating, author, comment) =>dispatch=> {
+    const newComment = {
         dishId: dishId,
         author: author,
         rating: rating,
         comment: comment
     }
+    newComment.date = new Date().toISOString();
+
+    axios.post(baseUrl + 'comments', newComment)
+        .then(response => response.data)
+        .then(comment => dispatch(commentConcate(comment)))
+
+}
+
+
+export const commentConcate = (comment) => ({
+    type: actionTypes.ADD_COMMENT,
+    payload: comment
 })
 
+export const commentLoading = () => ({
 
-export const loadDishes=dishes=>({
-    type:actionTypes.LOAD_DISHES,
-    payload:dishes
+    type: actionTypes.COMMENT_LOADING
 })
 
-export const dishesLoading=()=>({
-    type:actionTypes.DISHES_LOADING
+export const loadComments = comments => ({
+    type: actionTypes.LOAD_COMMENTS,
+    payload: comments
+
 })
 
-export const fetchDishes=()=> dispatch=>{
-        dispatch(dishesLoading());
+export const fetchComments = () => dispatch => {
+    dispatch(commentLoading());
 
-        setTimeout(()=>{
-            dispatch(loadDishes(DISHES))
-        }
-        ,2000);
-        
-    }
+    axios.get(baseUrl + 'comments')
+        .then(response => response.data)
+        .then(comments => dispatch(loadComments(comments)));
+}
+
+
+export const loadDishes = dishes => ({
+    type: actionTypes.LOAD_DISHES,
+    payload: dishes
+})
+
+export const dishesLoading = () => ({
+    type: actionTypes.DISHES_LOADING
+})
+
+export const dishesFailed=(errMess)=>({
+    type:actionTypes.DISHES_FAILED,
+    payload:errMess
+})
+
+export const fetchDishes = () => dispatch => {
+    dispatch(dishesLoading());
+
+    // axios.get('http://localhost:3001/dishes')
+    //     .then(response=>response.data)
+    //      .then(response => dis
+    //      .
+
+    axios.get(baseUrl + 'dishes')
+        .then(response => response.data)
+        .then(dishes => dispatch(loadDishes(dishes)))
+        .catch(error=>dispatch(dishesFailed(error.message)))
+}
